@@ -8,9 +8,39 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     """Application settings."""
+    # Application settings
+    LOG_LEVEL: str = "INFO"
+    
+    # Infolab API settings
+    INFOLAB_API_URL: HttpUrl = Field(
+        "http://localhost:8000", 
+        description="URL of the Infolab API"
+    )
+    
+    # Auth settings
+    API_KEY: SecretStr = Field(
+        ..., 
+        description="API key for MCP authentication"
+    )
+    TOKEN_ENDPOINT: str = Field(
+        "/mcp/token", 
+        description="Endpoint for token exchange"
+    )
+    VALIDATE_ENDPOINT: str = Field(
+        "/mcp/validate", 
+        description="Endpoint for token validation"
+    )
+    
+    # Token cache settings
+    TOKEN_CACHE_FILE: str = Field(
+        "token_cache.json", 
+        description="File to cache access tokens"
+    )
 
-    # Infolab OAuth Settings
-    load_dotenv()
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 # Initialize settings
+load_dotenv()
 settings = Settings()

@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+from pathlib import Path
 
 def configure_logging(log_level="INFO", log_file=None):
     """Configure logging with enhanced format and optional file output.
