@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, Dict, Tuple
+from urllib.parse import urljoin
 
 import httpx
 from pydantic import BaseModel
@@ -105,8 +106,8 @@ class AuthClient:
     def __init__(self):
         self.api_url = str(settings.INFOLAB_API_URL)
         self.api_key = settings.API_KEY.get_secret_value()
-        self.token_endpoint = f"{self.api_url}{settings.TOKEN_ENDPOINT}"
-        self.validate_endpoint = f"{self.api_url}{settings.VALIDATE_ENDPOINT}"
+        self.token_endpoint = urljoin(self.api_url, settings.TOKEN_ENDPOINT)
+        self.validate_endpoint = urljoin(self.api_url, settings.VALIDATE_ENDPOINT)
         self.token_cache = TokenCache()
         # Use limits and timeouts for better reliability
         self.http_client = httpx.AsyncClient(

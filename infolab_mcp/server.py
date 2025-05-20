@@ -147,8 +147,8 @@ def main():
         loop.run_until_complete(startup())
 
         # Run the MCP server with SSE transport
-        logger.info("Starting MCP server with SSE transport on port 8000")
-        mcp.run(transport="sse", host="0.0.0.0", port=8080)
+        logger.info("Starting MCP server with Streamable HTTP transport on port 8080 at path /mcp")
+        mcp.run(transport="streamable-http", host="::", port=8080, path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
