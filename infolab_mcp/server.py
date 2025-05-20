@@ -9,7 +9,13 @@ from fastmcp.server.dependencies import get_http_request
 
 from .config.settings import settings
 from .infolab.auth import auth_client
+from .infolab.client import api_client
 from .utils.logging import configure_logging
+from .tools.user_options import get_user_options
+from .tools.marketplace import search_marketplace
+from .tools.information import retrieve_information
+from .tools.contribution import contribute
+from .tools.persona import get_persona, refresh_persona
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -18,6 +24,20 @@ logger = logging.getLogger(__name__)
 # Initialize MCP server
 mcp = FastMCP(
     "InfoLabMCPServer",
+    instructions="""
+    Welcome to the InfoLab MCP Server!
+    
+    This server provides tools to interact with the InfoLab platform:
+    
+    1. `get_user_options` - Get information about your available courses, modules, and files.
+    2. `search_marketplace` - Search for courses in the marketplace.
+    3. `retrieve_information` - Get information from course content.
+    4. `contribute` - Add content to a course.
+    5. `get_persona` - Get information about a persona.
+    6. `refresh_persona` - Update a persona's content.
+    
+    Start by calling `get_user_options` to see what courses and modules you have access to.
+    """,
     dependencies=[
         "httpx",
         "mcp[cli]",
@@ -80,53 +100,13 @@ async def authenticate() -> bool:
         raise ValueError(f"Authentication failed: {str(e)}")
 
 
-@mcp.tool()
-async def retrieve_information(message: str, ctx: Context) -> str:
-    """
-    A dummy tool that demonstrates the authentication flow.
-
-    Args:
-        message: A message to echo back
-        ctx: The MCP context for the current request
-
-    Returns:
-        A string message with user information
-    """
-    # Log request information from the context
-    request = get_http_request()
-    if request:
-        logger.info(f"Request ID: {ctx.request_id}")
-        logger.info(f"Client ID: {ctx.client_id}")
-        logger.info(f"Transport Type: {ctx.transport_type if hasattr(ctx, 'transport_type') else 'Unknown'}")
-
-    # Send progress info to the client
-    await ctx.info("Processing your request...")
-
-    # Authenticate the request
-    try:
-        # Report progress
-        await ctx.report_progress(0, 2)
-
-        valid = await authenticate()
-
-        # Report progress
-        await ctx.report_progress(1, 2)
-
-        # Return a message with the user info
-        # todo here
-        response = ''
-
-        # Final progress update
-        await ctx.report_progress(2, 2)
-
-        return response
-    except ValueError as e:
-        await ctx.error(f"Authentication error: {str(e)}")
-        return f"Authentication error: {str(e)}"
-    except Exception as e:
-        logger.error(f"Error in dummy_tool: {str(e)}")
-        await ctx.error(f"An unexpected error occurred: {str(e)}")
-        return f"Error: {str(e)}"
+# Register tools
+mcp.tool()(get_user_options)
+mcp.tool()(search_marketplace)
+mcp.tool()(retrieve_information)
+mcp.tool()(contribute)
+mcp.tool()(get_persona)
+mcp.tool()(refresh_persona)
 
 
 async def shutdown():
@@ -134,6 +114,8 @@ async def shutdown():
     logger.info("Shutting down Infolab MCP server")
     if auth_client:
         await auth_client.close()
+    if api_client:
+        await api_client.close()
 
 
 async def startup():
