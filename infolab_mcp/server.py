@@ -28,13 +28,10 @@ mcp = FastMCP(
 )
 
 
-async def authenticate(ctx: Context) -> Dict[str, Any]:
+async def authenticate() -> bool:
     """
     Authenticate the request and get user info.
     
-    Args:
-        ctx: The MCP context for the current request
-        
     Returns:
         A dictionary with user information
         
@@ -55,40 +52,36 @@ async def authenticate(ctx: Context) -> Dict[str, Any]:
         # If no header provided by the client, use our cached token
         if not auth_header:
             logger.info("No auth header provided, using cached token")
-            valid, user_info = await auth_client.validate_token()
+            valid = await auth_client.validate_token()
 
             if valid:
-                logger.info(f"Using cached token for user {user_info.get('email')}")
-                return user_info
+                logger.info(f"Using cached token")
+                return valid
             else:
                 logger.info("Cached token invalid, refreshing")
                 # Get a new token and validate it
                 token = await auth_client.refresh_token()
-                valid, user_info = await auth_client.validate_token(token)
+                valid = await auth_client.validate_token(token)
 
-                if valid:
-                    logger.info(f"Using new token for user {user_info.get('email')}")
-                    return user_info
-                else:
+                if not valid:
                     raise ValueError("Failed to authenticate with API key")
+                return valid
         else:
             # Client provided its own token, validate it
             logger.info("Using client-provided auth header")
             token = auth_header.replace("Bearer ", "")
-            valid, user_info = await auth_client.validate_token(token)
+            valid = await auth_client.validate_token(token)
 
-            if valid:
-                logger.info(f"Client token valid for user {user_info.get('email')}")
-                return user_info
-            else:
+            if not valid:
                 raise ValueError("Invalid client-provided token")
+            return valid
     except Exception as e:
         logger.error(f"Authentication error: {str(e)}")
         raise ValueError(f"Authentication failed: {str(e)}")
 
 
 @mcp.tool()
-async def dummy_tool(message: str, ctx: Context) -> str:
+async def retrieve_information(message: str, ctx: Context) -> str:
     """
     A dummy tool that demonstrates the authentication flow.
 
@@ -114,15 +107,14 @@ async def dummy_tool(message: str, ctx: Context) -> str:
         # Report progress
         await ctx.report_progress(0, 2)
 
-        user_info = await authenticate(ctx)
-        user_email = user_info.get("email", "unknown")
-        user_type = user_info.get("type", "unknown")
+        valid = await authenticate()
 
         # Report progress
         await ctx.report_progress(1, 2)
 
         # Return a message with the user info
-        response = f"Hello {user_email} ({user_type})! You said: {message}"
+        # todo here
+        response = ''
 
         # Final progress update
         await ctx.report_progress(2, 2)
@@ -151,9 +143,9 @@ async def startup():
     # Test authentication flow
     try:
         token = await auth_client.get_token()
-        valid, user_info = await auth_client.validate_token(token)
+        valid = await auth_client.validate_token(token)
         if valid:
-            logger.info(f"Authentication test successful for user {user_info.get('email')}")
+            logger.info(f"Authentication test successful")
         else:
             logger.warning("Authentication test failed - token invalid")
     except Exception as e:

@@ -158,11 +158,11 @@ class AuthClient:
             logger.error(f"Error refreshing token: {str(e)}")
             raise
 
-    async def validate_token(self, token: Optional[str] = None) -> Tuple[bool, Dict]:
+    async def validate_token(self, token: Optional[str] = None) -> bool:
         """Validate a token and get user info."""
         token = token or self.token_cache.token
         if not token:
-            return False, {}
+            return False
 
         try:
             response = await self.http_client.get(
@@ -173,18 +173,18 @@ class AuthClient:
 
             if response.status_code != 200:
                 logger.warning(f"Token validation failed: {response.status_code} - {response.text}")
-                return False, {}
+                return False
 
-            return True, response.json()
+            return True
         except httpx.HTTPStatusError as e:
             logger.error(f"HTTP error during token validation: {e.response.status_code}")
-            return False, {}
+            return False
         except httpx.RequestError as e:
             logger.error(f"Request error during token validation: {str(e)}")
-            return False, {}
+            return False
         except Exception as e:
             logger.error(f"Error validating token: {str(e)}")
-            return False, {}
+            return False
 
     async def get_auth_header(self) -> Dict[str, str]:
         """Get authorization header with a valid token."""
