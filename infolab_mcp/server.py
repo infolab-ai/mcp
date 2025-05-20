@@ -1,10 +1,9 @@
 """MCP server for Infolab integration."""
 import asyncio
 import logging
-from typing import Dict, Any
 
 from dotenv import load_dotenv
-from fastmcp import FastMCP, Context
+from fastmcp import FastMCP
 from fastmcp.server.dependencies import get_http_request
 
 from .config.settings import settings
@@ -149,7 +148,7 @@ def main():
 
         # Run the MCP server with SSE transport
         logger.info("Starting MCP server with SSE transport on port 8000")
-        mcp.run(transport="sse", host="0.0.0.0", port=8000)
+        mcp.run(transport="sse", host="0.0.0.0", port=8080)
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:

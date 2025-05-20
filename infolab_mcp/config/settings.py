@@ -43,4 +43,4 @@ class Settings(BaseSettings):
 
 # Initialize settings
 load_dotenv()
-settings = Settings()
+settings = Settings(API_KEY=os.getenv('HUUH_API_KEY'))
