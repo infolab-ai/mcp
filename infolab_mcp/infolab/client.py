@@ -1,6 +1,7 @@
 """Client for interacting with the Infolab backend API."""
 import logging
 from typing import Dict, Any, Optional
+from urllib.parse import urljoin
 
 import httpx
 
@@ -64,7 +65,7 @@ class InfoLabClient:
             request_headers.update(auth_headers)
             
             # Build URL
-            url = f"{self.api_url}{endpoint}"
+            url = urljoin(self.api_url, endpoint)
             
             # Build timeout
             request_timeout = httpx.Timeout(timeout) if timeout else None

@@ -1,10 +1,9 @@
 """Infolab MCP authentication implementation."""
-import os
 import json
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict
 from urllib.parse import urljoin
 
 import httpx

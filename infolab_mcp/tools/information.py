@@ -38,9 +38,9 @@ async def retrieve_information(
             return {"error": "Query is too long. Maximum length is 150 characters."}
         
         # Validate required parameters
-        if not query or not relevant_modules or not relevant_file_ids:
-            await ctx.error("Missing required parameters: query, relevant_modules, and relevant_file_ids must be provided.")
-            return {"error": "Missing required parameters: query, relevant_modules, and relevant_file_ids must be provided."}
+        if not query:
+            await ctx.error("Missing required parameters: query must be provided.")
+            return {"error": "Missing required parameters: query must be provided."}
         
         # Report start
         await ctx.info(f"Retrieving information for '{query}'...")
