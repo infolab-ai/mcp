@@ -162,7 +162,10 @@ class AuthClient:
         """Validate a token and get user info."""
         token = token or self.token_cache.token
         if not token:
-            return False
+            await self.refresh_token()
+            if not self.token_cache.token:
+                logger.error("No valid token available for validation")
+                return False
 
         try:
             response = await self.http_client.get(

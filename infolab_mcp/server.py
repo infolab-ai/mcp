@@ -14,7 +14,7 @@ from .tools.user_options import get_user_options
 from .tools.marketplace import search_marketplace
 from .tools.information import retrieve_information
 from .tools.contribution import contribute
-from .tools.persona import get_persona, refresh_persona
+from .tools.persona import get_persona, refresh_persona, contribute_persona
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -34,6 +34,7 @@ mcp = FastMCP(
     4. `contribute` - Add content to a course.
     5. `get_persona` - Get information about a persona.
     6. `refresh_persona` - Update a persona's content.
+    7. `contribute_persona` - Contribute a new persona to a course.
     
     Start by calling `get_user_options` to see what courses and modules you have access to.
     """,
@@ -99,7 +100,7 @@ async def authenticate() -> bool:
         raise ValueError(f"Authentication failed: {str(e)}")
 
 
-# Register tools with explicit parameters for refresh_persona
+# Register tools with explicit parameters for refresh_persona and contribute_persona
 mcp.tool()(get_user_options)
 mcp.tool()(search_marketplace)
 mcp.tool()(retrieve_information)
@@ -127,6 +128,28 @@ mcp.tool(
         }
     }
 )(refresh_persona)
+
+# Register contribute_persona with explicit parameter descriptions
+mcp.tool(
+    annotations={
+        "name": "contribute_persona",
+        "description": "Contribute a new persona to a course",
+        "parameters": {
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to contribute to"
+            },
+            "persona_title": {
+                "type": "string",
+                "description": "Title of the new persona"
+            },
+            "persona_content": {
+                "type": "string",
+                "description": "Content of the new persona"
+            }
+        }
+    }
+)(contribute_persona)
 
 
 async def shutdown():

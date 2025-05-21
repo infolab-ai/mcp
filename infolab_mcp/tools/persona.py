@@ -1,6 +1,6 @@
 """Persona management MCP tools."""
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from urllib.parse import quote
 
 from fastmcp import Context
@@ -73,11 +73,12 @@ async def refresh_persona(
     Returns:
         A dictionary containing the result of the update.
     """
-    logger.info(
-        f"refresh_persona called with parameters: title='{title}', new_content length={len(new_content)}, course_id='{course_id}'")
+    logger.info(f"refresh_persona called with parameters: title='{title}', "
+                f"new_content length={len(new_content)}, "
+                f"course_id='{course_id}'")
 
     try:
-        # Report start
+        await ctx.info(f"Updating persona '{title}'...")
         await ctx.report_progress(0, 3)
 
         # Authenticate
@@ -87,27 +88,23 @@ async def refresh_persona(
             return {"error": "Authentication failed. Please check your credentials."}
 
         await ctx.report_progress(1, 3)
+        await ctx.info("Updating persona content...")
 
         try:
-            # Create the request body
-            data = {
+            form_data = {
                 "title": title,
                 "new_content": new_content
             }
 
-            # Only add course_id if it has a value
-            if course_id and course_id.strip():
-                data["course_id"] = course_id
+            if course_id is not None and course_id.strip():
+                form_data["course_id"] = course_id
 
-            # Log the full request data
-            await ctx.report_progress(2, 3)
-
-            # Make the request with proper headers
+            # Make the POST request with the form data in the body
             headers = {"Content-Type": "application/json"}
             response = await api_client.request(
                 method="POST",
                 endpoint="/mcp/refresh_persona",
-                json=data,
+                json=form_data,
                 headers=headers
             )
 
@@ -121,5 +118,86 @@ async def refresh_persona(
             return {"error": f"Error updating persona: {str(e)}"}
     except Exception as e:
         logger.exception("Unexpected error in refresh_persona")
+        await ctx.error("An unexpected error occurred")
+        return {"error": f"An unexpected error occurred: {str(e)}"}
+
+
+async def contribute_persona(
+        course_id: str,
+        persona_title: str,
+        persona_content: str,
+        ctx: Context = None
+) -> Dict[str, Any]:
+    """
+    Contribute a new persona to a course.
+    
+    Args:
+        course_id: ID of the course to contribute to
+        persona_title: Title of the new persona
+        persona_content: Content of the new persona
+        
+    Returns:
+        A dictionary containing the result of the contribution.
+    """
+    # Log all parameters at the beginning for debugging
+    logger.info(f"contribute_persona called with parameters: course_id='{course_id}', "
+                f"persona_title='{persona_title}', persona_content length={len(persona_content)}")
+
+    try:
+        # Report start
+        await ctx.info(f"Contributing new persona '{persona_title}' to course {course_id}...")
+        await ctx.report_progress(0, 3)
+
+        # Authenticate
+        valid = await auth_client.validate_token()
+        if not valid:
+            await ctx.error("Authentication failed")
+            return {"error": "Authentication failed. Please check your credentials."}
+
+        # Validate inputs
+        if not course_id or not persona_title or not persona_content:
+            await ctx.error(
+                "Missing required parameters: course_id, persona_title, and persona_content must be provided.")
+            return {
+                "error": "Missing required parameters: course_id, persona_title, and persona_content must be provided."}
+
+        # Check content length
+        if len(persona_content) > 50000:  # 50KB limit
+            await ctx.error("Persona content is too long. Maximum length is 50,000 characters.")
+            return {"error": "Persona content is too long. Maximum length is 50,000 characters."}
+
+        await ctx.report_progress(1, 3)
+
+        try:
+            # Create the request data
+            data = {
+                "course_id": course_id,
+                "persona_title": persona_title,
+                "persona_content": persona_content
+            }
+
+            # Log the request data
+            await ctx.info(f"Sending request to POST /mcp/contribute_persona")
+            await ctx.info(f"Request data: {data}")
+
+            # Make the POST request
+            headers = {"Content-Type": "application/json"}
+            response = await api_client.request(
+                method="POST",
+                endpoint="/mcp/contribute_persona",
+                json=data,
+                headers=headers
+            )
+
+            # Report completion
+            await ctx.report_progress(3, 3)
+            await ctx.info("Persona contributed successfully")
+
+            return response
+        except ValueError as e:
+            await ctx.error(f"Error contributing persona: {str(e)}")
+            return {"error": f"Error contributing persona: {str(e)}"}
+    except Exception as e:
+        logger.exception("Unexpected error in contribute_persona")
         await ctx.error("An unexpected error occurred")
         return {"error": f"An unexpected error occurred: {str(e)}"}
