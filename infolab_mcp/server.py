@@ -99,13 +99,34 @@ async def authenticate() -> bool:
         raise ValueError(f"Authentication failed: {str(e)}")
 
 
-# Register tools
+# Register tools with explicit parameters for refresh_persona
 mcp.tool()(get_user_options)
 mcp.tool()(search_marketplace)
 mcp.tool()(retrieve_information)
 mcp.tool()(contribute)
 mcp.tool()(get_persona)
-mcp.tool()(refresh_persona)
+
+# Register refresh_persona with explicit parameter descriptions
+mcp.tool(
+    annotations={
+        "name": "refresh_persona",
+        "description": "Update persona content",
+        "parameters": {
+            "title": {
+                "type": "string",
+                "description": "Title of the persona to update"
+            },
+            "new_content": {
+                "type": "string",
+                "description": "New content for the persona"
+            },
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course if it's a course persona (optional)"
+            }
+        }
+    }
+)(refresh_persona)
 
 
 async def shutdown():
