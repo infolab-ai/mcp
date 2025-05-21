@@ -1,7 +1,7 @@
 [project]
-name = "infolab-mcp"
+name = "huuh-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "collaborative AI"
 readme = "README.md"
 authors = [
     { name = "Filipp Trigub", email = "filipp.trigub@infolab.ai" }
