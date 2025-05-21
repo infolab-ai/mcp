@@ -100,12 +100,109 @@ async def authenticate() -> bool:
         raise ValueError(f"Authentication failed: {str(e)}")
 
 
-# Register tools with explicit parameters for refresh_persona and contribute_persona
-mcp.tool()(get_user_options)
-mcp.tool()(search_marketplace)
-mcp.tool()(retrieve_information)
-mcp.tool()(contribute)
-mcp.tool()(get_persona)
+# Register tools with explicit parameters
+
+# Register get_user_options with annotations
+mcp.tool(
+    annotations={
+        "name": "get_user_options",
+        "description": "Get information about available courses, modules, and files",
+        "parameters": {}
+    }
+)(get_user_options)
+
+# Register search_marketplace with annotations
+mcp.tool(
+    annotations={
+        "name": "search_marketplace",
+        "description": "Search for courses in the marketplace",
+        "parameters": {
+            "query": {
+                "type": "string",
+                "description": "Search query string (max 150 characters)"
+            }
+        }
+    }
+)(search_marketplace)
+
+# Register retrieve_information with annotations
+mcp.tool(
+    annotations={
+        "name": "retrieve_information",
+        "description": "Retrieve information from course content",
+        "parameters": {
+            "query": {
+                "type": "string",
+                "description": "Search query (max 150 characters)"
+            },
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to search in"
+            },
+            "relevant_modules": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of module numbers to search in (optional)"
+            },
+            "relevant_groups": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of group IDs to search in (optional)"
+            },
+            "relevant_file_ids": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of file IDs to search in (optional)"
+            }
+        }
+    }
+)(retrieve_information)
+
+# Register contribute with annotations
+mcp.tool(
+    annotations={
+        "name": "contribute",
+        "description": "Add a contribution to a course",
+        "parameters": {
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to contribute to"
+            },
+            "week_number": {
+                "type": "string",
+                "description": "Week number to add the contribution to"
+            },
+            "contribution_title": {
+                "type": "string",
+                "description": "Title of the contribution"
+            },
+            "contribution_content": {
+                "type": "string",
+                "description": "Content of the contribution (max 30,000 characters)"
+            }
+        }
+    }
+)(contribute)
+
+# Register get_persona with annotations
+mcp.tool(
+    annotations={
+        "name": "get_persona",
+        "description": "Get information about a persona",
+        "parameters": {
+            "title": {
+                "type": "string",
+                "description": "Title of the persona to retrieve"
+            }
+        }
+    }
+)(get_persona)
 
 # Register refresh_persona with explicit parameter descriptions
 mcp.tool(
