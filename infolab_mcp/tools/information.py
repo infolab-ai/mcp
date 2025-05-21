@@ -1,6 +1,6 @@
 """Information retrieval MCP tool."""
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from fastmcp import Context
 
@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 async def retrieve_information(
     query: str,
     course_id: str,
-    relevant_modules: List[str],
-    relevant_groups: List[str],
-    relevant_file_ids: List[str],
-    ctx: Context
+    relevant_modules: Optional[List[str]] = None,
+    relevant_groups: Optional[List[str]] = None,
+    relevant_file_ids: Optional[List[str]] = None,
+    ctx: Context = None
 ) -> Dict[str, Any]:
     """
     Retrieve information from course content.
@@ -24,9 +24,9 @@ async def retrieve_information(
     Args:
         query: Search query (max 150 characters)
         course_id: ID of the course to search in
-        relevant_modules: List of module numbers to search in
-        relevant_groups: List of group IDs to search in
-        relevant_file_ids: List of file IDs to search in
+        relevant_modules: List of module numbers to search in (optional)
+        relevant_groups: List of group IDs to search in (optional)
+        relevant_file_ids: List of file IDs to search in (optional)
         
     Returns:
         A dictionary containing document results.
@@ -61,10 +61,15 @@ async def retrieve_information(
             params = {
                 "query": query,
                 "course_id": course_id,
-                "relevant_modules": ",".join(relevant_modules),
-                "relevant_groups": ",".join(relevant_groups),
-                "relevant_file_ids": ",".join(relevant_file_ids)
             }
+            
+            # Add optional parameters only if they exist
+            if relevant_modules:
+                params["relevant_modules"] = ",".join(relevant_modules)
+            if relevant_groups:
+                params["relevant_groups"] = ",".join(relevant_groups)
+            if relevant_file_ids:
+                params["relevant_file_ids"] = ",".join(relevant_file_ids)
             
             # Make request
             response = await api_client.request("GET", "/mcp/information", params=params)
