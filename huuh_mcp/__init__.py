@@ -1,6 +1,6 @@
-"""Infolab MCP Server Package.
+"""huuh MCP Server Package.
 
-This package provides a Model Context Protocol (MCP) server for Infolab integration.
+This package provides a Model Context Protocol (MCP) server for huuh integration.
 """
 import logging
 

@@ -1,1 +1,1 @@
-"""Utility modules for Infolab MCP server."""
+"""Utility modules for huuh MCP server."""

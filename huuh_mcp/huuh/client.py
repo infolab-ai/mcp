@@ -1,4 +1,4 @@
-"""Client for interacting with the Infolab backend API."""
+"""Client for interacting with the huuh backend API."""
 import logging
 from typing import Dict, Any, Optional
 from urllib.parse import urljoin
@@ -11,8 +11,8 @@ from .auth import auth_client
 logger = logging.getLogger(__name__)
 
 
-class InfoLabClient:
-    """HTTP client for communicating with InfoLab backend API."""
+class HuuhClient:
+    """HTTP client for communicating with huuh backend API."""
     
     def __init__(self):
         self.api_url = str(settings.INFOLAB_API_URL)
@@ -74,7 +74,7 @@ class InfoLabClient:
             logger.debug(f"Making {method} request to {url}")
             response = await self.http_client.request(
                 method, 
-                url, 
+                url,
                 json=json, 
                 params=params, 
                 headers=request_headers,
@@ -110,4 +110,4 @@ class InfoLabClient:
 
 
 # Create a singleton instance
-api_client = InfoLabClient()
+api_client = HuuhClient()

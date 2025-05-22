@@ -1,4 +1,4 @@
-"""MCP server for Infolab integration."""
+"""MCP server for huuh integration."""
 import asyncio
 import logging
 
@@ -22,11 +22,11 @@ logger = logging.getLogger(__name__)
 
 # Initialize MCP server
 mcp = FastMCP(
-    "InfoLabMCPServer",
+    "HuuhMCPServer",
     instructions="""
-    Welcome to the InfoLab MCP Server!
+    Welcome to the huuh MCP Server!
     
-    This server provides tools to interact with the InfoLab platform:
+    This server provides tools to interact with the huuh platform:
     
     1. `get_user_options` - Get information about your available courses, modules, and files.
     2. `search_marketplace` - Search for courses in the marketplace.
@@ -251,7 +251,7 @@ mcp.tool(
 
 async def shutdown():
     """Clean up resources on shutdown."""
-    logger.info("Shutting down Infolab MCP server")
+    logger.info("Shutting down huuh MCP server")
     if auth_client:
         await auth_client.close()
     if api_client:
@@ -260,7 +260,7 @@ async def shutdown():
 
 async def startup():
     """Initialize services on startup."""
-    logger.info("Starting Infolab MCP server")
+    logger.info("Starting huuh MCP server")
 
     # Test authentication flow
     try:
@@ -275,9 +275,9 @@ async def startup():
 
 
 def main():
-    """Main function for running the Infolab server."""
+    """Main function for running the huuh server."""
     load_dotenv()
-    logger.info("Starting Infolab MCP server...")
+    logger.info("Starting huuh MCP server...")
 
     # Create event loop to run startup tasks
     loop = asyncio.new_event_loop()

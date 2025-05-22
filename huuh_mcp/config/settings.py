@@ -1,4 +1,4 @@
-"""MCP Infolab server configuration."""
+"""MCP huuh server configuration."""
 import os
 
 from dotenv import load_dotenv

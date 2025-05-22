@@ -31,7 +31,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
             state = params.get('state', [None])[0]
             
             if code and state:
-                logger.info("Received auth code and state from Infolab")
+                logger.info("Received auth code and state from huuh")
                 self.server.auth_code = code
                 self.server.state = state
                 
@@ -60,8 +60,8 @@ class CallbackHandler(BaseHTTPRequestHandler):
         logger.info(format % args)
 
 
-class InfolabCallbackServer:
-    """Server to handle Infolab OAuth callbacks."""
+class HuuhCallbackServer:
+    """Server to handle huuh OAuth callbacks."""
     
     def __init__(self, port: int = 3000):
         self.port = port

@@ -1,1 +1,1 @@
-"""Infolab package."""
+"""huuh package."""

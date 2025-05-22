@@ -1,4 +1,4 @@
-"""Configure logging for the Infolab MCP server."""
+"""Configure logging for the huuh MCP server."""
 import logging
 import os
 import sys

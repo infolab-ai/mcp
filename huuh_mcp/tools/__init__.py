@@ -1,1 +1,1 @@
-"""MCP tools for Infolab platform."""
+"""MCP tools for huuh platform."""

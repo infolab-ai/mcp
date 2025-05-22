@@ -1,4 +1,4 @@
-"""Infolab MCP authentication implementation."""
+"""huuh MCP authentication implementation."""
 import json
 import logging
 from datetime import datetime, timedelta
@@ -100,7 +100,7 @@ class TokenCache:
 
 
 class AuthClient:
-    """Client for MCP authentication with Infolab API."""
+    """Client for MCP authentication with huuh API."""
 
     def __init__(self):
         self.api_url = str(settings.INFOLAB_API_URL)
