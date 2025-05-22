@@ -50,7 +50,7 @@ def configure_logging(log_level="INFO", log_file=None):
     logging.getLogger("asyncio").setLevel(logging.WARNING)
     
     # Our code should get the specified log level
-    logger = logging.getLogger("infolab_mcp")
+    logger = logging.getLogger("huuh_mcp")
     logger.setLevel(numeric_level)
     
     logger.debug(f"Logging configured with level: {log_level}")

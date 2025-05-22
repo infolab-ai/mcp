@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-infolab-mcp = "huuh_mcp.server:main"
+huuh-mcp = "huuh_mcp.server:main"
 
 [build-system]
 requires = ["hatchling"]
