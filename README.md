@@ -80,7 +80,7 @@ Add the following configuration to `claude-desktop.json`:
       "command": "uvx",
       "args": ["huuh-mcp"],
       "env": {
-        "HUUH_APIK_KEY": "<yours>",
+        "HUUH_APIK_KEY": "<yours>"
       }
     }
   }
