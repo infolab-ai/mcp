@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: pypi-deploy
+  cancel-in-progress: true
+
 jobs:
   pypi-publish:
     name: Publish release to PyPI
