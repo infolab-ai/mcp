@@ -5,8 +5,8 @@ from urllib.parse import quote
 
 from fastmcp import Context
 
-from ..infolab.auth import auth_client
-from ..infolab.client import api_client
+from ..huuh.auth import auth_client
+from ..huuh.client import api_client
 
 logger = logging.getLogger(__name__)
 
