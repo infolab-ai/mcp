@@ -1,6 +1,7 @@
 """MCP server for huuh integration."""
 import asyncio
 import logging
+import socket
 
 from dotenv import load_dotenv
 from fastmcp import FastMCP
@@ -288,8 +289,13 @@ def main():
         loop.run_until_complete(startup())
 
         # Run the MCP server with SSE transport
-        logger.info("Starting MCP server with Streamable HTTP transport on port 8080 at path /mcp")
-        mcp.run(transport="streamable-http", host="::", port=8080, path="/mcp")
+        sock = socket.socket()
+        sock.bind(('', 0))
+        port_number = sock.getsockname()[1]
+        logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
+        mcp.run(transport="stdio",)
+        # todo reactive for remote use or once more clients support it
+        # mcp.run(transport="streamable-http", host="::", port=port_number, path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
