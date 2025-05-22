@@ -36,6 +36,7 @@ jobs:
 
       - name: Build package
         run: |
+          uv lock
           uv build
 
       - name: Publish distribution 📦 to PyPI
