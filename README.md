@@ -69,10 +69,7 @@ Our server comes packed with **7 incredible tools** that make working with educa
 
 ## 🚀 Quick Start - Get Up and Running in Seconds!
 
-### Option 1: Super Easy with uvx (Recommended! 🌟)
-
-
-## Claude Desktop Configuration
+### Claude Desktop Configuration
 
 Add the following configuration to `claude-desktop.json`:
 
