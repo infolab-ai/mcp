@@ -1,6 +1,17 @@
 # 🚀 Huuh MCP Server - Collaborative AI for everybody! 🎓
 
-The **Huuh MCP Server** is your friendly neighborhood Model Context Protocol server that bridges the gap between AI applications and the https://huuh.me platform 🤖💝
+The **Huuh MCP Server** is your friendly neighborhood Model Context Protocol server that bridges the gap between AI applications and the [huuh.me](https://huuh.me) platform 🤖💝
+
+With [huuh.me](https://huuh.me) you can:
+- 📚 **AI-native knowledge** 
+  - create knowledge bases 
+  - retrieve and contribute content directly in chat
+- 🫂 **shared AI for your team** 
+  - share and collaborate on knowledge bases with others
+  - let them retrieve and contribute
+- 🎭 **better results with flexible usage** 
+  - Build and share AI personas (system prompts) 
+  - switch from your Research AI to your Marketing AI with in chat
 
 ## ✨ What Does This Server Do?
 
@@ -11,6 +22,8 @@ Our server is like a Swiss Army knife for collaboration in the era of AI! 🔧�
 - 🎭 **Manage Personas**: Get and update AI personas to quickly apply system prompts in the chat
 - 📝 **Contribute Content**: Add your own contributions to bases and help build the knowledge base
 - 🛠️ **Contribute Personas**: Contribute personas you find useful to a public base
+
+To use the server, please register on the [huuh.me](https://huuh.me) platform and get your API key. This server is designed to work with the huuh API, so you'll need an account to get started! 🌐
 
 ## 🛠️ Available Tools - Your AI Toolbox!
 
