@@ -1,7 +1,6 @@
 .venv
 .idea/
 .vscode/
-uv.lock
 tokens/
 token_cache.json
 *.env
