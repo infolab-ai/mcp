@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     
     # Infolab API settings
     INFOLAB_API_URL: HttpUrl = Field(
-        "http://localhost:8000", 
+        "https://backend-app-production.orangewater-62be872e.francecentral.azurecontainerapps.io",
         description="URL of the Infolab API"
     )
     
