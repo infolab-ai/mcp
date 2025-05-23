@@ -1,5 +1,7 @@
 # 🚀 Huuh MCP Server - Collaborative AI for everybody! 🎓
 
+[![smithery badge](https://smithery.ai/badge/@infolab-ai/mcp)](https://smithery.ai/server/@infolab-ai/mcp)
+
 The **Huuh MCP Server** is your friendly neighborhood Model Context Protocol server that bridges the gap between AI applications and the [huuh.me](https://huuh.me) platform 🤖💝
 
 With [huuh.me](https://huuh.me) you can:
@@ -81,6 +83,14 @@ Our server comes packed with **7 incredible tools** that make working with educa
 **Perfect for:** Storing system prompts to reapply them in the future!
 
 ## 🚀 Quick Start - Get Up and Running in Seconds!
+
+### Installing via Smithery
+
+To install mcp for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@infolab-ai/mcp):
+
+```bash
+npx -y @smithery/cli install @infolab-ai/mcp --client claude
+```
 
 ### Claude Desktop Configuration
 
