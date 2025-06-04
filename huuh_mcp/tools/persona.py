@@ -201,7 +201,6 @@ async def contribute_persona_to_course(
 
 # todo test
 async def contribute_persona_to_user(
-        user_id: str,
         persona_title: str,
         persona_content: str,
         ctx: Context = None
@@ -210,7 +209,6 @@ async def contribute_persona_to_user(
     Contribute a new persona to a course.
 
     Args:
-        user_id: ID of the course to contribute to
         persona_title: Title of the new persona
         persona_content: Content of the new persona
 
@@ -218,12 +216,12 @@ async def contribute_persona_to_user(
         A dictionary containing the result of the contribution.
     """
     # Log all parameters at the beginning for debugging
-    logger.info(f"contribute_persona called with parameters: user_id='{user_id}', "
+    logger.info(f"contribute_persona called with parameters: "
                 f"persona_title='{persona_title}', persona_content length={len(persona_content)}")
 
     try:
         # Report start
-        await ctx.info(f"Contributing new persona '{persona_title}' to user {user_id}...")
+        await ctx.info(f"Contributing new persona '{persona_title}'...")
         await ctx.report_progress(0, 3)
 
         # Authenticate
@@ -233,7 +231,7 @@ async def contribute_persona_to_user(
             return {"error": "Authentication failed. Please check your credentials."}
 
         # Validate inputs
-        if not user_id or not persona_title or not persona_content:
+        if not persona_title or not persona_content:
             await ctx.error(
                 "Missing required parameters: user_id, persona_title, and persona_content must be provided.")
             return {
@@ -249,7 +247,6 @@ async def contribute_persona_to_user(
         try:
             # Create the request data
             data = {
-                "user_id": user_id,
                 "persona_title": persona_title,
                 "persona_content": persona_content
             }
@@ -275,4 +272,3 @@ async def contribute_persona_to_user(
         logger.exception("Unexpected error in contribute_persona")
         await ctx.error("An unexpected error occurred")
         return {"error": f"An unexpected error occurred: {str(e)}"}
-

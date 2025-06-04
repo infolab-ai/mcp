@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 async def create_base(
-        user_id: str,
         base_name: str,
         base_description: str,
         ctx: Context = None
@@ -20,17 +19,16 @@ async def create_base(
     Create a new base for a user.
 
     Args:
-        user_id: ID of the user creating the base
         base_name: Name of the base
         base_description: Description of the base
 
     Returns:
         A dictionary containing the result of the base creation.
     """
-    logger.info(f"create_base called with user_id='{user_id}', base_name='{base_name}'")
+    logger.info(f"create_base called with  base_name='{base_name}'")
 
     try:
-        await ctx.info(f"Creating base '{base_name}' for user '{user_id}'...")
+        await ctx.info(f"Creating base '{base_name}'...")
         await ctx.report_progress(0, 3)
 
         # Authenticate
@@ -40,7 +38,7 @@ async def create_base(
             return {"error": "Authentication failed. Please check your credentials."}
 
         # Validate inputs
-        if not user_id or not base_name or not base_description:
+        if not base_name or not base_description:
             await ctx.error(
                 "Missing required parameters: user_id, base_name, and base_description must be provided.")
             return {
@@ -50,7 +48,6 @@ async def create_base(
 
         try:
             data = {
-                "user_id": user_id,
                 "course_name": base_name,
                 "course_description": base_description
             }
