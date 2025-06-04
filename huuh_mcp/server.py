@@ -15,7 +15,8 @@ from .tools.user_options import get_user_options
 from .tools.marketplace import search_marketplace
 from .tools.information import retrieve_information
 from .tools.contribution import contribute
-from .tools.persona import get_persona, refresh_persona, contribute_persona
+from .tools.persona import get_persona, refresh_persona, contribute_persona_to_course, contribute_persona_to_user
+from .tools.base import create_base
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -35,7 +36,9 @@ mcp = FastMCP(
     4. `contribute` - Add content to a course.
     5. `get_persona` - Get information about a persona.
     6. `refresh_persona` - Update a persona's content.
-    7. `contribute_persona` - Contribute a new persona to a course.
+    7. `contribute_persona_to_course` - Contribute a new persona to a course.
+    8. `contribute_persona_to_user` - Contribute a new persona to a user.
+    9. `create_base` - Create a new knowledge base for a user.
     
     Start by calling `get_user_options` to see what courses and modules you have access to.
     """,
@@ -227,10 +230,10 @@ mcp.tool(
     }
 )(refresh_persona)
 
-# Register contribute_persona with explicit parameter descriptions
+# Register contribute_persona_to_course with explicit parameter descriptions
 mcp.tool(
     annotations={
-        "name": "contribute_persona",
+        "name": "contribute_persona_to_course",
         "description": "Contribute a new persona to a course",
         "parameters": {
             "course_id": {
@@ -247,7 +250,49 @@ mcp.tool(
             }
         }
     }
-)(contribute_persona)
+)(contribute_persona_to_course)
+
+mcp.tool(
+    annotations={
+        "name": "contribute_persona_to_user",
+        "description": "Contribute a new persona to the user",
+        "parameters": {
+            "user_id": {
+                "type": "string",
+                "description": "ID of the user to contribute to"
+            },
+            "persona_title": {
+                "type": "string",
+                "description": "Title of the new persona"
+            },
+            "persona_content": {
+                "type": "string",
+                "description": "Content of the new persona"
+            }
+        }
+    }
+)(contribute_persona_to_user)
+
+mcp.tool(
+    annotations={
+        "name": "create_base",
+        "description": "Create a base",
+        "parameters": {
+            "user_id": {
+                "type": "string",
+                "description": "ID of the user to create the base for"
+            },
+            "base_name": {
+                "type": "string",
+                "description": "Name of the base to create"
+            },
+            "base_description": {
+                "type": "string",
+                "description": "Description of the base"
+            }
+        }
+    }
+)(create_base)
 
 
 async def shutdown():
@@ -293,7 +338,7 @@ def main():
         sock.bind(('', 0))
         port_number = sock.getsockname()[1]
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
-        mcp.run(transport="stdio",)
+        mcp.run(transport="stdio", )
         # todo reactive for remote use or once more clients support it
         # mcp.run(transport="streamable-http", host="::", port=port_number, path="/mcp")
     except KeyboardInterrupt:
