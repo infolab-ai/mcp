@@ -15,7 +15,7 @@ from .tools.user_options import get_user_options
 from .tools.marketplace import search_marketplace
 from .tools.information import retrieve_information
 from .tools.contribution import contribute
-from .tools.persona import get_persona, refresh_persona, contribute_persona
+from .tools.persona import get_persona, refresh_persona, contribute_persona_to_course, contribute_persona_to_user
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -227,7 +227,7 @@ mcp.tool(
     }
 )(refresh_persona)
 
-# Register contribute_persona with explicit parameter descriptions
+# Register contribute_persona_to_course with explicit parameter descriptions
 mcp.tool(
     annotations={
         "name": "contribute_persona",
@@ -247,7 +247,28 @@ mcp.tool(
             }
         }
     }
-)(contribute_persona)
+)(contribute_persona_to_course)
+
+mcp.tool(
+    annotations={
+        "name": "contribute_persona",
+        "description": "Contribute a new persona to a course",
+        "parameters": {
+            "user_id": {
+                "type": "string",
+                "description": "ID of the user to contribute to"
+            },
+            "persona_title": {
+                "type": "string",
+                "description": "Title of the new persona"
+            },
+            "persona_content": {
+                "type": "string",
+                "description": "Content of the new persona"
+            }
+        }
+    }
+)(contribute_persona_to_user)
 
 
 async def shutdown():
