@@ -16,7 +16,8 @@ from .tools.marketplace import search_marketplace
 from .tools.information import retrieve_information
 from .tools.contribution import contribute
 from .tools.persona import get_persona, refresh_persona, contribute_persona_to_course, contribute_persona_to_user
-from .tools.base import create_base
+from .tools.base import create_base, assign_base_to_space
+from .tools.space import create_spaces
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -39,6 +40,8 @@ mcp = FastMCP(
     7. `contribute_persona_to_course` - Contribute a new persona to a course.
     8. `contribute_persona_to_user` - Contribute a new persona to a user.
     9. `create_base` - Create a new knowledge base for a user.
+    10. `assign_base_to_space` - Assign a base to a space.
+    11. `create_spaces` - Create a new space.
     
     Start by calling `get_user_options` to see what courses and modules you have access to.
     """,
@@ -278,10 +281,6 @@ mcp.tool(
         "name": "create_base",
         "description": "Create a base",
         "parameters": {
-            "user_id": {
-                "type": "string",
-                "description": "ID of the user to create the base for"
-            },
             "base_name": {
                 "type": "string",
                 "description": "Name of the base to create"
@@ -293,6 +292,40 @@ mcp.tool(
         }
     }
 )(create_base)
+
+mcp.tool(
+    annotations={
+        "name": "assign_base_to_space",
+        "description": "Assign a base to a space",
+        "parameters": {
+            "space_id": {
+                "type": "string",
+                "description": "ID of the space to assign the base to"
+            },
+            "base_id": {
+                "type": "string",
+                "description": "ID of the base to assign"
+            }
+        }
+    }
+)(assign_base_to_space)
+
+mcp.tool(
+    annotations={
+        "name": "create_spaces",
+        "description": "Create a new space",
+        "parameters": {
+            "space_name": {
+                "type": "string",
+                "description": "Name of the space"
+            },
+            "space_description": {
+                "type": "string",
+                "description": "Description of the space"
+            }
+        }
+    }
+)(create_spaces)
 
 
 async def shutdown():
@@ -338,9 +371,9 @@ def main():
         sock.bind(('', 0))
         port_number = sock.getsockname()[1]
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
-        mcp.run(transport="stdio", )
-        # todo reactive for remote use or once more clients support it
-        # mcp.run(transport="streamable-http", host="::", port=port_number, path="/mcp")
+        # todo old transport
+        # mcp.run(transport="stdio", )
+        mcp.run(transport="streamable-http", host="::", port=port_number, path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
