@@ -33,7 +33,7 @@ jobs:
 
       - name: Bump minor version in pyproject.toml
         run: |
-          uv version --bump minor
+          uv version --bump patch
 
       - name: Commit bumped version (optional)
         run: |

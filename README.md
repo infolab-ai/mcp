@@ -24,6 +24,9 @@ Our server is like a Swiss Army knife for collaboration in the era of AI! 🔧�
 - 🎭 **Manage Personas**: Get and update AI personas to quickly apply system prompts in the chat
 - 📝 **Contribute Content**: Add your own contributions to bases and help build the knowledge base
 - 🛠️ **Contribute Personas**: Contribute personas you find useful to a public base
+- 🏗️ **Create Bases**: Start new knowledge bases for your projects
+- 🔗 **Assign Bases to Spaces**: Share bases with your team or workspace
+- 🌟 **Create Spaces**: Set up collaborative spaces for team work
 
 To use the server, please register on the [huuh.me](https://huuh.me) platform and get your API key. This server is designed to work with the huuh API, so you'll need an account to get started! 🌐
 
