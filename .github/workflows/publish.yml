@@ -31,6 +31,18 @@ jobs:
         with:
           python-version-file: "pyproject.toml"
 
+      - name: Bump minor version in pyproject.toml
+        run: |
+          uv version --bump minor
+
+      - name: Commit bumped version (optional)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add pyproject.toml
+          git commit -m "Bump minor version"
+          git push
+
       - name: Install the project
         run: |
           uv lock
