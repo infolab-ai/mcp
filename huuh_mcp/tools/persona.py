@@ -122,7 +122,7 @@ async def refresh_persona(
         return {"error": f"An unexpected error occurred: {str(e)}"}
 
 
-async def contribute_persona(
+async def contribute_persona_to_course(
         course_id: str,
         persona_title: str,
         persona_content: str,
@@ -162,9 +162,9 @@ async def contribute_persona(
                 "error": "Missing required parameters: course_id, persona_title, and persona_content must be provided."}
 
         # Check content length
-        if len(persona_content) > 50000:  # 50KB limit
-            await ctx.error("Persona content is too long. Maximum length is 50,000 characters.")
-            return {"error": "Persona content is too long. Maximum length is 50,000 characters."}
+        if len(persona_content) > 500:
+            await ctx.error("Persona content is too long. Maximum length is 500 characters.")
+            return {"error": "Persona content is too long. Maximum length is 500 characters."}
 
         await ctx.report_progress(1, 3)
 
@@ -176,15 +176,86 @@ async def contribute_persona(
                 "persona_content": persona_content
             }
 
-            # Log the request data
-            await ctx.info(f"Sending request to POST /mcp/contribute_persona")
-            await ctx.info(f"Request data: {data}")
+            # Make the POST request
+            headers = {"Content-Type": "application/json"}
+            response = await api_client.request(
+                method="POST",
+                endpoint="/mcp/contribute_persona_to_course",
+                json=data,
+                headers=headers
+            )
+
+            # Report completion
+            await ctx.report_progress(3, 3)
+            await ctx.info("Persona contributed successfully")
+
+            return response
+        except ValueError as e:
+            await ctx.error(f"Error contributing persona: {str(e)}")
+            return {"error": f"Error contributing persona: {str(e)}"}
+    except Exception as e:
+        logger.exception("Unexpected error in contribute_persona")
+        await ctx.error("An unexpected error occurred")
+        return {"error": f"An unexpected error occurred: {str(e)}"}
+
+
+# todo test
+async def contribute_persona_to_user(
+        persona_title: str,
+        persona_content: str,
+        ctx: Context = None
+) -> Dict[str, Any]:
+    """
+    Contribute a new persona to a course.
+
+    Args:
+        persona_title: Title of the new persona
+        persona_content: Content of the new persona
+
+    Returns:
+        A dictionary containing the result of the contribution.
+    """
+    # Log all parameters at the beginning for debugging
+    logger.info(f"contribute_persona called with parameters: "
+                f"persona_title='{persona_title}', persona_content length={len(persona_content)}")
+
+    try:
+        # Report start
+        await ctx.info(f"Contributing new persona '{persona_title}'...")
+        await ctx.report_progress(0, 3)
+
+        # Authenticate
+        valid = await auth_client.validate_token()
+        if not valid:
+            await ctx.error("Authentication failed")
+            return {"error": "Authentication failed. Please check your credentials."}
+
+        # Validate inputs
+        if not persona_title or not persona_content:
+            await ctx.error(
+                "Missing required parameters: user_id, persona_title, and persona_content must be provided.")
+            return {
+                "error": "Missing required parameters: user_id, persona_title, and persona_content must be provided."}
+
+        # Check content length
+        if len(persona_content) > 500:
+            await ctx.error("Persona content is too long. Maximum length is 500 characters.")
+            return {"error": "Persona content is too long. Maximum length is 500 characters."}
+
+        await ctx.report_progress(1, 3)
+
+        try:
+            # Create the request data
+            data = {
+                "persona_title": persona_title,
+                "persona_content": persona_content
+            }
 
             # Make the POST request
             headers = {"Content-Type": "application/json"}
             response = await api_client.request(
                 method="POST",
-                endpoint="/mcp/contribute_persona",
+                endpoint="/mcp/add_persona_to_user",
                 json=data,
                 headers=headers
             )
