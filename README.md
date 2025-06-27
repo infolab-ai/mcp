@@ -27,7 +27,7 @@ To use the server, please register on the [huuh.me](https://huuh.me) platform an
 
 ## 🛠️ Available Tools - Your AI Toolbox!
 
-Our server comes packed with **7 incredible tools** that make working with educational content a breeze:
+Our server comes packed with **10 incredible tools** that make working with educational content a breeze:
 
 ### 1. 🏠 `get_user_options`
 **What it does:** Gets information about your available bases, modules, and files  
@@ -72,13 +72,34 @@ Our server comes packed with **7 incredible tools** that make working with educa
 - `base_id` (string, optional) - Course-specific persona updates  
 **Perfect for:** Iteratively improving system prompts for future use!
 
-### 7. 🎁 `contribute_persona`
-**What it does:** Add a brand new persona to a base (yours or public)
+### 7. 🎁 `contribute_persona_to_course`
+**What it does:** Add a brand new persona to a course (yours or public)
 **Parameters:**
-- `base_id` (string) - Course to add persona to
+- `course_id` (string) - Course to add persona to
 - `persona_title` (string) - Name of your new persona
 - `persona_content` (string) - Persona description and behavior (max 150 characters)  
 **Perfect for:** Storing system prompts to reapply them in the future!
+
+### 8. 🏗️ `create_base`
+**What it does:** Create a new knowledge base for your content
+**Parameters:**
+- `base_name` (string) - Name of your new base
+- `base_description` (string) - Description of what the base is about  
+**Perfect for:** Starting fresh knowledge bases for new topics or projects!
+
+### 9. 🔗 `assign_base_to_space`
+**What it does:** Assign an existing base to a collaborative space
+**Parameters:**
+- `space_id` (string) - ID of the space to assign the base to
+- `base_id` (string) - ID of the base to assign  
+**Perfect for:** Sharing bases with your team or workspace!
+
+### 10. 🌟 `create_spaces`
+**What it does:** Create a new collaborative space for team work
+**Parameters:**
+- `space_name` (string) - Name of your new space
+- `space_description` (string) - Description of the space's purpose  
+**Perfect for:** Setting up collaborative environments for teams and projects!
 
 ## 🚀 Quick Start - Get Up and Running in Seconds!
 
