@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     )
 
     # Auth settings
-    API_KEY: SecretStr = Field(
+    HUUH_API_KEY: SecretStr = Field(
         ...,
         description="API key for MCP authentication"
     )
@@ -46,6 +46,6 @@ class Settings(BaseSettings):
 # Initialize settings
 load_dotenv()
 settings = Settings(
-    API_KEY=os.getenv('HUUH_API_KEY'),
+    HUUH_API_KEY=os.getenv('HUUH_API_KEY'),
     INFOLAB_API_URL=os.getenv('BACKEND_URL', "https://api.huuh.me")
 )

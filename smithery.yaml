@@ -13,12 +13,7 @@ startCommand:
       HUUH_API_KEY:
         type: string
         description: Your HUUH API key for authenticating with the huuh.me platform
-      LOG_LEVEL:
-        type: string
-        default: INFO
-        description: Optional log verbosity level
     env:
       BACKEND_URL: "https://api.huuh.me"
   exampleConfig:
     HUUH_API_KEY: abcdef123456
-    LOG_LEVEL: DEBUG

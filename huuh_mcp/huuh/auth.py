@@ -104,7 +104,7 @@ class AuthClient:
 
     def __init__(self):
         self.api_url = str(settings.INFOLAB_API_URL)
-        self.api_key = settings.API_KEY.get_secret_value()
+        self.api_key = settings.HUUH_API_KEY.get_secret_value()
         self.token_endpoint = urljoin(self.api_url, settings.TOKEN_ENDPOINT)
         self.validate_endpoint = urljoin(self.api_url, settings.VALIDATE_ENDPOINT)
         self.token_cache = TokenCache()
