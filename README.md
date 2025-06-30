@@ -123,7 +123,7 @@ Add the following configuration to `claude-desktop.json`:
 ```json
 {
   "mcpServers": {
-    "linkedin-mcp": {
+    "huuh-mcp": {
       "command": "uvx",
       "args": ["huuh-mcp"],
       "env": {
@@ -160,7 +160,7 @@ cp .env.sample .env
 # Edit .env with your API credentials
 
 # Run the server in development mode
-python -m huuh_mcp.server
+uv --directory path/to/huuh_mcp -m huuh_mcp.server --env-file /path/to/.env
 ```
 
 ### Environment Variables 📋
