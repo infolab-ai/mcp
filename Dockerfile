@@ -13,4 +13,4 @@ COPY README.md .
 RUN pip install --no-cache-dir .
 
 # Default entrypoint
-ENTRYPOINT ["huuh-mcp"]
+CMD ["PORT=${PORT} FASTMCP_PORT=${PORT} huuh-mcp"]

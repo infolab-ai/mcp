@@ -373,8 +373,8 @@ def main():
         port_number = sock.getsockname()[1]
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
         # todo streamable http still fails
-        mcp.run(transport="stdio", )
-        # mcp.run(transport="streamable-http", host="::", port=os.getenv('PORT', port_number), path="/mcp")
+        # mcp.run(transport="stdio", )
+        mcp.run(transport="streamable-http", host="::", port=os.getenv('PORT', port_number), path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
