@@ -1,4 +1,5 @@
 """MCP server for huuh integration."""
+import argparse
 import asyncio
 import logging
 import os
@@ -19,6 +20,7 @@ from .tools.contribution import contribute
 from .tools.persona import get_persona, refresh_persona, contribute_persona_to_course, contribute_persona_to_user
 from .tools.base import create_base, assign_base_to_space
 from .tools.space import create_spaces
+
 
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
@@ -54,6 +56,7 @@ mcp = FastMCP(
         "python-dotenv"
     ]
 )
+
 
 
 async def authenticate() -> bool:
@@ -354,40 +357,37 @@ async def startup():
         logger.error(f"Authentication test failed: {str(e)}")
 
 
-def main():
+async def main():
     """Main function for running the huuh server."""
     load_dotenv()
     logger.info("Starting huuh MCP server...")
 
-    # Create event loop to run startup tasks
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
     try:
-        # Run startup tasks
-        loop.run_until_complete(startup())
+        await startup()
 
         # Run the MCP server with Streamable HTTP transport
         sock = socket.socket()
         sock.bind(('', 0))
         port_number = sock.getsockname()[1]
-        logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
+        parser = argparse.ArgumentParser(description="Run MCP Streamable HTTP based server")
+        parser.add_argument("--port", type=int, default=port_number, help="Localhost port to listen on")
+        args = parser.parse_args()
+
+
+        logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
         # todo streamable http still fails
         mcp.run(transport="stdio", )
-        # mcp.run(transport="streamable-http", host="::", port=os.getenv('PORT', port_number), path="/mcp")
+        # await mcp.run_async(transport="http",
+        #                     port=os.getenv('PORT', args.port),
+        #                     path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
-        logger.error(f"Error running MCP server: {str(e)}")
-    finally:
-        try:
-            # Ensure shutdown tasks run
-            if not loop.is_closed():
-                loop.run_until_complete(shutdown())
-                loop.close()
-        except Exception as e:
-            logger.error(f"Error during shutdown: {str(e)}")
+
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error running MCP server: {str(e.__repr__())}: {tb}")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
