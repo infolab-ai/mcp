@@ -1,6 +1,7 @@
 """MCP server for huuh integration."""
 import asyncio
 import logging
+import os
 import socket
 
 from dotenv import load_dotenv
@@ -366,14 +367,14 @@ def main():
         # Run startup tasks
         loop.run_until_complete(startup())
 
-        # Run the MCP server with SSE transport
+        # Run the MCP server with Streamable HTTP transport
         sock = socket.socket()
         sock.bind(('', 0))
         port_number = sock.getsockname()[1]
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {port_number} at path /mcp")
-        # todo old transport
+        # todo streamable http still fails
         # mcp.run(transport="stdio", )
-        mcp.run(transport="streamable-http", host="::", port=port_number, path="/mcp")
+        mcp.run(transport="streamable-http", host="::", port=os.getenv('PORT', port_number), path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:

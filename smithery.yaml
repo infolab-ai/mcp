@@ -1,9 +1,10 @@
 # Smithery configuration file: https://smithery.ai/docs/build/project-config
-build:
-  dockerfile: "smithery.Dockerfile"
-  dockerBuildPath: "."
 startCommand:
   type: http
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'huuh-mcp', args: [], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
   configSchema:
     # JSON Schema defining the configuration options for the MCP.
     type: object
@@ -12,8 +13,11 @@ startCommand:
     properties:
       HUUH_API_KEY:
         type: string
-        description: Your HUUH API key for authenticating with the huuh.me platform
+        description: Your huuh API key for authenticating with the huuh.me platform
     env:
       BACKEND_URL: "https://api.huuh.me"
   exampleConfig:
     HUUH_API_KEY: abcdef123456
+build:
+  dockerfile: "smithery.Dockerfile"
+  dockerBuildPath: "."
