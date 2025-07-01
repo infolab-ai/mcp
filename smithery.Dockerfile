@@ -12,9 +12,3 @@ COPY README.md .
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
 ENTRYPOINT ["python3", "-m", "huuh_mcp.server"]
-
-## Install dependencies and package
-#RUN pip install --no-cache-dir .
-#
-## Default entrypoint
-#ENTRYPOINT ["huuh-mcp"]

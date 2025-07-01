@@ -3,10 +3,14 @@ import argparse
 import logging
 import os
 import socket
+from typing import Dict, Any
 
 from dotenv import load_dotenv
 from fastmcp import FastMCP
+from fastmcp import Context
 
+from huuh.client import api_client
+from utils.auth_wrapper import ensure_authenticated_async, get_error_response
 from .config.settings import settings
 from .utils.logging import configure_logging
 from .tools.user_options import get_user_options
@@ -41,221 +45,268 @@ mcp = FastMCP(
 # Register tools with explicit parameters
 
 # Register get_user_options with annotations
-mcp.tool(
-    # annotations={
-    #     "name": "get_user_options",
-    #     "description": "Get information about available courses, modules, and files",
-    #     "parameters": {}
-    # }
-)(get_user_options)
+@mcp.tool(annotations={
+        "name": "get_user_options",
+        "description": "Get information about available courses, modules, and files",
+        "parameters": {}
+    })
+async def get_user_options(ctx: Context) -> Dict[str, Any]:
+    """
+    Retrieve user options and preferences for the authenticated user.
+
+    This tool provides information about the user's available courses,
+    modules, groups, and files that can be used with other tools.
+
+    Returns:
+        A dictionary containing user options and settings.
+    """
+    try:
+        # Report start
+        await ctx.info("Retrieving user options...")
+        await ctx.report_progress(0, 2)
+
+        # Authenticate
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
+            await ctx.error("Authentication failed")
+            return get_error_response("Please check your credentials.")
+
+        # Request user options
+        await ctx.report_progress(1, 2)
+        await ctx.info("Fetching user options...")
+
+        try:
+            response = await api_client.request("GET", "/mcp/user_options")
+
+            # Report completion
+            await ctx.report_progress(2, 2)
+            await ctx.info("User options retrieved successfully")
+
+            return response
+        except ValueError as e:
+            await ctx.error(f"Error fetching user options: {str(e)}")
+            return {"error": f"Error fetching user options: {str(e)}"}
+    except Exception as e:
+        logger.exception("Unexpected error in get_user_options")
+        await ctx.error("An unexpected error occurred")
+        return {"error": f"An unexpected error occurred: {str(e)}"}
+
+
+# mcp.tool(
+#     annotations={
+#         "name": "get_user_options",
+#         "description": "Get information about available courses, modules, and files",
+#         "parameters": {}
+#     }
+# )(get_user_options)
 
 # Register search_marketplace with annotations
 mcp.tool(
-    # annotations={
-    #     "name": "search_marketplace",
-    #     "description": "Search for courses in the marketplace",
-    #     "parameters": {
-    #         "query": {
-    #             "type": "string",
-    #             "description": "Search query string (max 150 characters)"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "search_marketplace",
+        "description": "Search for courses in the marketplace",
+        "parameters": {
+            "query": {
+                "type": "string",
+                "description": "Search query string (max 150 characters)"
+            }
+        }
+    }
 )(search_marketplace)
 
 # Register retrieve_information with annotations
 mcp.tool(
-    # annotations={
-    #     "name": "retrieve_information",
-    #     "description": "Retrieve information from course content",
-    #     "parameters": {
-    #         "query": {
-    #             "type": "string",
-    #             "description": "Search query (max 150 characters)"
-    #         },
-    #         "course_id": {
-    #             "type": "string",
-    #             "description": "ID of the course to search in"
-    #         },
-    #         "relevant_modules": {
-    #             "type": "array",
-    #             "items": {
-    #                 "type": "string"
-    #             },
-    #             "description": "List of module numbers to search in (optional)"
-    #         },
-    #         "relevant_groups": {
-    #             "type": "array",
-    #             "items": {
-    #                 "type": "string"
-    #             },
-    #             "description": "List of group IDs to search in (optional)"
-    #         },
-    #         "relevant_file_ids": {
-    #             "type": "array",
-    #             "items": {
-    #                 "type": "string"
-    #             },
-    #             "description": "List of file IDs to search in (optional)"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "retrieve_information",
+        "description": "Retrieve information from course content",
+        "parameters": {
+            "query": {
+                "type": "string",
+                "description": "Search query (max 150 characters)"
+            },
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to search in"
+            },
+            "relevant_modules": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of module numbers to search in (optional)"
+            },
+            "relevant_groups": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of group IDs to search in (optional)"
+            },
+            "relevant_file_ids": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "List of file IDs to search in (optional)"
+            }
+        }
+    }
 )(retrieve_information)
 
 # Register contribute with annotations
 mcp.tool(
-    # annotations={
-    #     "name": "contribute",
-    #     "description": "Add a contribution to a course",
-    #     "parameters": {
-    #         "course_id": {
-    #             "type": "string",
-    #             "description": "ID of the course to contribute to"
-    #         },
-    #         "week_number": {
-    #             "type": "string",
-    #             "description": "Week number to add the contribution to"
-    #         },
-    #         "contribution_title": {
-    #             "type": "string",
-    #             "description": "Title of the contribution"
-    #         },
-    #         "contribution_content": {
-    #             "type": "string",
-    #             "description": "Content of the contribution (max 30,000 characters)"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "contribute",
+        "description": "Add a contribution to a course",
+        "parameters": {
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to contribute to"
+            },
+            "week_number": {
+                "type": "string",
+                "description": "Week number to add the contribution to"
+            },
+            "contribution_title": {
+                "type": "string",
+                "description": "Title of the contribution"
+            },
+            "contribution_content": {
+                "type": "string",
+                "description": "Content of the contribution (max 30,000 characters)"
+            }
+        }
+    }
 )(contribute)
 
 # Register get_persona with annotations
 mcp.tool(
-    # annotations={
-    #     "name": "get_persona",
-    #     "description": "Get information about a persona",
-    #     "parameters": {
-    #         "title": {
-    #             "type": "string",
-    #             "description": "Title of the persona to retrieve"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "get_persona",
+        "description": "Get information about a persona",
+        "parameters": {
+            "title": {
+                "type": "string",
+                "description": "Title of the persona to retrieve"
+            }
+        }
+    }
 )(get_persona)
 
 # Register refresh_persona with explicit parameter descriptions
 mcp.tool(
-    # annotations={
-    #     "name": "refresh_persona",
-    #     "description": "Update persona content",
-    #     "parameters": {
-    #         "title": {
-    #             "type": "string",
-    #             "description": "Title of the persona to update"
-    #         },
-    #         "new_content": {
-    #             "type": "string",
-    #             "description": "New content for the persona"
-    #         },
-    #         "course_id": {
-    #             "type": "string",
-    #             "description": "ID of the course if it's a course persona (optional)"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "refresh_persona",
+        "description": "Update persona content",
+        "parameters": {
+            "title": {
+                "type": "string",
+                "description": "Title of the persona to update"
+            },
+            "new_content": {
+                "type": "string",
+                "description": "New content for the persona"
+            },
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course if it's a course persona (optional)"
+            }
+        }
+    }
 )(refresh_persona)
 
 # Register contribute_persona_to_course with explicit parameter descriptions
 mcp.tool(
-    # annotations={
-    #     "name": "contribute_persona_to_course",
-    #     "description": "Contribute a new persona to a course",
-    #     "parameters": {
-    #         "course_id": {
-    #             "type": "string",
-    #             "description": "ID of the course to contribute to"
-    #         },
-    #         "persona_title": {
-    #             "type": "string",
-    #             "description": "Title of the new persona"
-    #         },
-    #         "persona_content": {
-    #             "type": "string",
-    #             "description": "Content of the new persona"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "contribute_persona_to_course",
+        "description": "Contribute a new persona to a course",
+        "parameters": {
+            "course_id": {
+                "type": "string",
+                "description": "ID of the course to contribute to"
+            },
+            "persona_title": {
+                "type": "string",
+                "description": "Title of the new persona"
+            },
+            "persona_content": {
+                "type": "string",
+                "description": "Content of the new persona"
+            }
+        }
+    }
 )(contribute_persona_to_course)
 
 mcp.tool(
-    # annotations={
-    #     "name": "contribute_persona_to_user",
-    #     "description": "Contribute a new persona to the user",
-    #     "parameters": {
-    #         "user_id": {
-    #             "type": "string",
-    #             "description": "ID of the user to contribute to"
-    #         },
-    #         "persona_title": {
-    #             "type": "string",
-    #             "description": "Title of the new persona"
-    #         },
-    #         "persona_content": {
-    #             "type": "string",
-    #             "description": "Content of the new persona"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "contribute_persona_to_user",
+        "description": "Contribute a new persona to the user",
+        "parameters": {
+            "user_id": {
+                "type": "string",
+                "description": "ID of the user to contribute to"
+            },
+            "persona_title": {
+                "type": "string",
+                "description": "Title of the new persona"
+            },
+            "persona_content": {
+                "type": "string",
+                "description": "Content of the new persona"
+            }
+        }
+    }
 )(contribute_persona_to_user)
 
 mcp.tool(
-    # annotations={
-    #     "name": "create_base",
-    #     "description": "Create a base",
-    #     "parameters": {
-    #         "base_name": {
-    #             "type": "string",
-    #             "description": "Name of the base to create"
-    #         },
-    #         "base_description": {
-    #             "type": "string",
-    #             "description": "Description of the base"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "create_base",
+        "description": "Create a base",
+        "parameters": {
+            "base_name": {
+                "type": "string",
+                "description": "Name of the base to create"
+            },
+            "base_description": {
+                "type": "string",
+                "description": "Description of the base"
+            }
+        }
+    }
 )(create_base)
 
 mcp.tool(
-    # annotations={
-    #     "name": "assign_base_to_space",
-    #     "description": "Assign a base to a space",
-    #     "parameters": {
-    #         "space_id": {
-    #             "type": "string",
-    #             "description": "ID of the space to assign the base to"
-    #         },
-    #         "base_id": {
-    #             "type": "string",
-    #             "description": "ID of the base to assign"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "assign_base_to_space",
+        "description": "Assign a base to a space",
+        "parameters": {
+            "space_id": {
+                "type": "string",
+                "description": "ID of the space to assign the base to"
+            },
+            "base_id": {
+                "type": "string",
+                "description": "ID of the base to assign"
+            }
+        }
+    }
 )(assign_base_to_space)
 
 mcp.tool(
-    # annotations={
-    #     "name": "create_spaces",
-    #     "description": "Create a new space",
-    #     "parameters": {
-    #         "space_name": {
-    #             "type": "string",
-    #             "description": "Name of the space"
-    #         },
-    #         "space_description": {
-    #             "type": "string",
-    #             "description": "Description of the space"
-    #         }
-    #     }
-    # }
+    annotations={
+        "name": "create_spaces",
+        "description": "Create a new space",
+        "parameters": {
+            "space_name": {
+                "type": "string",
+                "description": "Name of the space"
+            },
+            "space_description": {
+                "type": "string",
+                "description": "Description of the space"
+            }
+        }
+    }
 )(create_spaces)
 
 
@@ -274,7 +325,7 @@ def main():
         # args = parser.parse_args()
 
         # logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
-        mcp.run(transport="stdio", )
+        mcp.run(transport="stdio")
         # mcp.run(transport="http",
         #         port=os.getenv('PORT', args.port),
         #         path="/mcp")
