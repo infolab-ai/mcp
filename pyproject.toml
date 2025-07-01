@@ -1,6 +1,6 @@
 [project]
 name = "huuh-mcp"
-version = "0.2.20"
+version = "0.2.21"
 description = "collaborative AI"
 readme = "README.md"
 authors = [
