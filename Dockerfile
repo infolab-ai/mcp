@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy project files
 COPY pyproject.toml .
-COPY requirements.txt .
+COPY uv.lock .
 COPY huuh_mcp ./huuh_mcp
 COPY README.md .
 

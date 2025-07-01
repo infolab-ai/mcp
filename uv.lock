@@ -214,7 +214,7 @@ wheels = [
 
 [[package]]
 name = "huuh-mcp"
-version = "0.2.12"
+version = "0.2.16"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },

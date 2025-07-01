@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy project files
 COPY pyproject.toml .
-COPY requirements.txt .
+COPY uv.lock .
 COPY huuh_mcp ./huuh_mcp
 COPY README.md .
 
@@ -13,4 +13,4 @@ COPY README.md .
 RUN pip install --no-cache-dir .
 
 # Default entrypoint
-ENTRYPOINT ["huuh-mcp"]
+ENTRYPOINT ["python3", "-m", "huuh_mcp.server"]
