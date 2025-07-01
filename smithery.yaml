@@ -6,9 +6,8 @@ startCommand:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
 #    |-
 #    (config) => ({ command: 'huuh-mcp', args: [], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
-    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
     |-
-    (config) => ({ command: 'python3', args: ['-m', 'huuh-mcp.server'] })
+    (config) => ({ command: 'python3', args: ['-m', 'huuh-mcp.server'], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
   configSchema:
     # JSON Schema defining the configuration options for the MCP.
     type: object
