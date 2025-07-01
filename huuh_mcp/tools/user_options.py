@@ -1,11 +1,12 @@
 """User options MCP tool."""
+import asyncio
 import logging
 from typing import Dict, Any
 
 from fastmcp import Context
 
-from ..huuh.auth import auth_client
 from ..huuh.client import api_client
+from ..utils.auth_wrapper import ensure_authenticated_async, get_error_response
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +27,10 @@ async def get_user_options(ctx: Context) -> Dict[str, Any]:
         await ctx.report_progress(0, 2)
         
         # Authenticate
-        valid = await auth_client.validate_token()
-        if not valid:
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
             await ctx.error("Authentication failed")
-            return {"error": "Authentication failed. Please check your credentials."}
+            return get_error_response("Please check your credentials.")
         
         # Request user options
         await ctx.report_progress(1, 2)

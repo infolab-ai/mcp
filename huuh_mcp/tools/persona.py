@@ -5,8 +5,8 @@ from urllib.parse import quote
 
 from fastmcp import Context
 
-from ..huuh.auth import auth_client
 from ..huuh.client import api_client
+from ..utils.auth_wrapper import ensure_authenticated_async, get_error_response
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +27,10 @@ async def get_persona(title: str, ctx: Context) -> Dict[str, Any]:
         await ctx.report_progress(0, 2)
 
         # Authenticate
-        valid = await auth_client.validate_token()
-        if not valid:
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
             await ctx.error("Authentication failed")
-            return {"error": "Authentication failed. Please check your credentials."}
+            return get_error_response("Please check your credentials.")
 
         # Request persona
         await ctx.report_progress(1, 2)
@@ -82,10 +82,10 @@ async def refresh_persona(
         await ctx.report_progress(0, 3)
 
         # Authenticate
-        valid = await auth_client.validate_token()
-        if not valid:
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
             await ctx.error("Authentication failed")
-            return {"error": "Authentication failed. Please check your credentials."}
+            return get_error_response("Please check your credentials.")
 
         await ctx.report_progress(1, 3)
         await ctx.info("Updating persona content...")
@@ -149,10 +149,10 @@ async def contribute_persona_to_course(
         await ctx.report_progress(0, 3)
 
         # Authenticate
-        valid = await auth_client.validate_token()
-        if not valid:
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
             await ctx.error("Authentication failed")
-            return {"error": "Authentication failed. Please check your credentials."}
+            return get_error_response("Please check your credentials.")
 
         # Validate inputs
         if not course_id or not persona_title or not persona_content:
@@ -225,10 +225,10 @@ async def contribute_persona_to_user(
         await ctx.report_progress(0, 3)
 
         # Authenticate
-        valid = await auth_client.validate_token()
-        if not valid:
+        await ctx.info("Authenticating...")
+        if not await ensure_authenticated_async():
             await ctx.error("Authentication failed")
-            return {"error": "Authentication failed. Please check your credentials."}
+            return get_error_response("Please check your credentials.")
 
         # Validate inputs
         if not persona_title or not persona_content:

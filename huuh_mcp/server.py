@@ -1,17 +1,12 @@
 """MCP server for huuh integration."""
 import argparse
-import asyncio
 import logging
-import os
 import socket
 
 from dotenv import load_dotenv
 from fastmcp import FastMCP
-from fastmcp.server.dependencies import get_http_request
 
 from .config.settings import settings
-from .huuh.auth import auth_client
-from .huuh.client import api_client
 from .utils.logging import configure_logging
 from .tools.user_options import get_user_options
 from .tools.marketplace import search_marketplace
@@ -59,56 +54,7 @@ mcp = FastMCP(
 
 
 
-async def authenticate() -> bool:
-    """
-    Authenticate the request and get user info.
-    
-    Returns:
-        A dictionary with user information
-        
-    Raises:
-        ValueError: If authentication fails
-    """
-    logger.info("Authenticating MCP request")
 
-    try:
-        # Get authorization header from context if available
-        auth_header = None
-        request = get_http_request()
-        if request and request.headers:
-            # In fastmcp, the context.request.headers is a dictionary-like object
-            auth_header = request.headers.get("Authorization")
-            logger.debug(f"Found headers in context: {list(request.headers.keys())}")
-
-        # If no header provided by the client, use our cached token
-        if not auth_header:
-            logger.info("No auth header provided, using cached token")
-            valid = await auth_client.validate_token()
-
-            if valid:
-                logger.info(f"Using cached token")
-                return valid
-            else:
-                logger.info("Cached token invalid, refreshing")
-                # Get a new token and validate it
-                token = await auth_client.refresh_token()
-                valid = await auth_client.validate_token(token)
-
-                if not valid:
-                    raise ValueError("Failed to authenticate with API key")
-                return valid
-        else:
-            # Client provided its own token, validate it
-            logger.info("Using client-provided auth header")
-            token = auth_header.replace("Bearer ", "")
-            valid = await auth_client.validate_token(token)
-
-            if not valid:
-                raise ValueError("Invalid client-provided token")
-            return valid
-    except Exception as e:
-        logger.error(f"Authentication error: {str(e)}")
-        raise ValueError(f"Authentication failed: {str(e)}")
 
 
 # Register tools with explicit parameters
@@ -332,39 +278,15 @@ mcp.tool(
 )(create_spaces)
 
 
-async def shutdown():
-    """Clean up resources on shutdown."""
-    logger.info("Shutting down huuh MCP server")
-    if auth_client:
-        await auth_client.close()
-    if api_client:
-        await api_client.close()
 
 
-async def startup():
-    """Initialize services on startup."""
-    logger.info("Starting huuh MCP server")
 
-    # Test authentication flow
-    try:
-        token = await auth_client.get_token()
-        valid = await auth_client.validate_token(token)
-        if valid:
-            logger.info(f"Authentication test successful")
-        else:
-            logger.warning("Authentication test failed - token invalid")
-    except Exception as e:
-        logger.error(f"Authentication test failed: {str(e)}")
-
-
-async def main():
+def main():
     """Main function for running the huuh server."""
     load_dotenv()
     logger.info("Starting huuh MCP server...")
 
     try:
-        await startup()
-
         # Run the MCP server with Streamable HTTP transport
         sock = socket.socket()
         sock.bind(('', 0))
@@ -373,21 +295,18 @@ async def main():
         parser.add_argument("--port", type=int, default=port_number, help="Localhost port to listen on")
         args = parser.parse_args()
 
-
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
-        # todo streamable http still fails
-        mcp.run(transport="stdio", )
+        mcp.run(transport="stdio")
         # await mcp.run_async(transport="http",
         #                     port=os.getenv('PORT', args.port),
         #                     path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
-
         import traceback
         tb = traceback.format_exc()
         logger.error(f"Error running MCP server: {str(e.__repr__())}: {tb}")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
