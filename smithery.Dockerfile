@@ -11,4 +11,4 @@ COPY README.md .
 
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
-ENTRYPOINT ["python3", "-m", "huuh_mcp.server"]
+ENTRYPOINT ["python", "-m", "huuh_mcp.server"]
