@@ -10,15 +10,16 @@ startCommand:
     (config) => ({ command: 'python3', args: ['-m', 'huuh-mcp.server'], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
   configSchema:
     # JSON Schema defining the configuration options for the MCP.
-    type: object
-    required:
-      - HUUH_API_KEY
-    properties:
-      HUUH_API_KEY:
-        type: string
-        description: Your huuh API key for authenticating with the huuh.me platform
-  exampleConfig:
-    HUUH_API_KEY: abcdef123456
+    {}
+#    type: object
+#    required:
+#      - HUUH_API_KEY
+#    properties:
+#      HUUH_API_KEY:
+#        type: string
+#        description: Your huuh API key for authenticating with the huuh.me platform
+  exampleConfig: {}
+#    HUUH_API_KEY: abcdef123456
 build:
   dockerfile: "smithery.Dockerfile"
   dockerBuildPath: "."
