@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp import Context
 
-from huuh.client import api_client
-from utils.auth_wrapper import ensure_authenticated_async, get_error_response
 from .config.settings import settings
 from .utils.logging import configure_logging
 from .tools.user_options import get_user_options
