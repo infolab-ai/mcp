@@ -110,7 +110,7 @@ Our server comes packed with **10 incredible tools** that make working with educ
 
 ### Installing via Smithery
 
-To install mcp for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@infolab-ai/mcp):
+To install Huuh Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@infolab-ai/mcp):
 
 ```bash
 npx -y @smithery/cli install @infolab-ai/mcp --client claude
