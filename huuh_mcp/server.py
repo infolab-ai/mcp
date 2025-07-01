@@ -1,6 +1,7 @@
 """MCP server for huuh integration."""
 import argparse
 import logging
+import os
 import socket
 
 from dotenv import load_dotenv
@@ -16,7 +17,6 @@ from .tools.persona import get_persona, refresh_persona, contribute_persona_to_c
 from .tools.base import create_base, assign_base_to_space
 from .tools.space import create_spaces
 
-
 # Configure logging
 configure_logging(log_level=settings.LOG_LEVEL)
 logger = logging.getLogger(__name__)
@@ -24,22 +24,8 @@ logger = logging.getLogger(__name__)
 # Initialize MCP server
 mcp = FastMCP(
     "HuuhMCPServer",
-    instructions="""
-    Welcome to the huuh MCP Server!
-    
-    This server provides tools to interact with the huuh platform:
-    
-    1. `get_user_options` - Get information about your available courses, modules, and files.
-    2. `search_marketplace` - Search for courses in the marketplace.
-    3. `retrieve_information` - Get information from course content.
-    4. `contribute` - Add content to a course.
-    5. `get_persona` - Get information about a persona.
-    6. `refresh_persona` - Update a persona's content.
-    7. `contribute_persona_to_course` - Contribute a new persona to a course.
-    8. `contribute_persona_to_user` - Contribute a new persona to a user.
-    9. `create_base` - Create a new knowledge base for a user.
-    10. `assign_base_to_space` - Assign a base to a space.
-    11. `create_spaces` - Create a new space.
+    instructions="""    
+    This server provides tools to interact with the huuh platform.
     
     Start by calling `get_user_options` to see what courses and modules you have access to.
     """,
@@ -51,11 +37,6 @@ mcp = FastMCP(
         "python-dotenv"
     ]
 )
-
-
-
-
-
 
 # Register tools with explicit parameters
 
@@ -278,9 +259,6 @@ mcp.tool(
 )(create_spaces)
 
 
-
-
-
 def main():
     """Main function for running the huuh server."""
     load_dotenv()
@@ -296,10 +274,10 @@ def main():
         args = parser.parse_args()
 
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
-        mcp.run(transport="stdio")
-        # await mcp.run_async(transport="http",
-        #                     port=os.getenv('PORT', args.port),
-        #                     path="/mcp")
+        # mcp.run(transport="stdio")
+        mcp.run(transport="http",
+                port=os.getenv('PORT', args.port),
+                path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
