@@ -31,17 +31,17 @@ jobs:
         with:
           python-version-file: "pyproject.toml"
 
-      - name: Bump minor version in pyproject.toml
-        run: |
-          uv version --bump patch
-
-      - name: Commit bumped version (optional)
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add pyproject.toml
-          git commit -m "Bump minor version"
-          git push
+#      - name: Bump minor version in pyproject.toml
+#        run: |
+#          uv version --bump patch
+#
+#      - name: Commit bumped version (optional)
+#        run: |
+#          git config user.name "GitHub Actions"
+#          git config user.email "actions@github.com"
+#          git add pyproject.toml
+#          git commit -m "Bump minor version"
+#          git push
 
       - name: Install the project
         run: |
@@ -52,5 +52,5 @@ jobs:
         run: |
           uv build
 
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+#      - name: Publish distribution 📦 to PyPI
+#        uses: pypa/gh-action-pypi-publish@release/v1
