@@ -274,10 +274,10 @@ def main():
         args = parser.parse_args()
 
         logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
-        # mcp.run(transport="stdio")
-        mcp.run(transport="http",
-                port=os.getenv('PORT', args.port),
-                path="/mcp")
+        mcp.run(transport="stdio")
+        # mcp.run(transport="http",
+        #         port=os.getenv('PORT', args.port),
+        #         path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
