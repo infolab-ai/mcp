@@ -1,13 +1,12 @@
 # Smithery configuration file: https://smithery.ai/docs/build/project-config
-runtime: "container"
 startCommand:
   type: stdio
   commandFunction:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'python', args: ['-m', 'huuh_mcp.server'], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
 #    |-
 #    (config) => ({ command: 'huuh-mcp', args: [], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
-    |-
-    (config) => ({ command: 'python3', args: ['-m', 'huuh-mcp.server'], env: { HUUH_API_KEY: config.HUUH_API_KEY } })
   configSchema:
     # JSON Schema defining the configuration options for the MCP.
     type: object
