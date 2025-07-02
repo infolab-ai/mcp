@@ -267,19 +267,20 @@ def main():
     logger.info("Starting huuh MCP server...")
 
     try:
-        # Run the MCP server with Streamable HTTP transport
-        # sock = socket.socket()
-        # sock.bind(('', 0))
-        # port_number = sock.getsockname()[1]
-        # parser = argparse.ArgumentParser(description="Run MCP Streamable HTTP based server")
-        # parser.add_argument("--port", type=int, default=port_number, help="Localhost port to listen on")
-        # args = parser.parse_args()
+        # logger.info(f"Starting MCP server with STDIO transport")
+        # mcp.run(transport="stdio")
 
-        # logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
-        mcp.run(transport="stdio")
-        # mcp.run(transport="http",
-        #         port=os.getenv('PORT', args.port),
-        #         path="/mcp")
+        # Run the MCP server with Streamable HTTP transport
+        sock = socket.socket()
+        sock.bind(('', 0))
+        port_number = sock.getsockname()[1]
+        parser = argparse.ArgumentParser(description="Run MCP Streamable HTTP based server")
+        parser.add_argument("--port", type=int, default=port_number, help="Localhost port to listen on")
+        args = parser.parse_args()
+        logger.info(f"Starting MCP server with Streamable HTTP transport on port {args.port} at path /mcp")
+        mcp.run(transport="http",
+                port=os.getenv('PORT', args.port),
+                path="/mcp")
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
