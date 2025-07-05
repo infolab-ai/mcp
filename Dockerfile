@@ -9,8 +9,6 @@ COPY uv.lock .
 COPY huuh_mcp ./huuh_mcp
 COPY README.md .
 
-# Install dependencies and package
-RUN pip install --no-cache-dir .
+RUN pip install --upgrade pip && pip install --no-cache-dir .
 
-# Default entrypoint
-CMD ["PORT=${PORT} FASTMCP_PORT=${PORT} huuh-mcp"]
+ENTRYPOINT ["python3", "-m", "huuh_mcp.server"]
